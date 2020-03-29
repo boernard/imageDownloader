@@ -7,9 +7,23 @@
 #on ubuntu execute this script with 'sudo bash bestseller.sh'
 
 export PATH="/home/ubuntu/bin:/home/ubuntu/.local/bin:/home/ubuntu/bin:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin::$PATH"
-export AWS_ACCESS_KEY_ID=***JAIDQ
-export AWS_SECRET_ACCESS_KEY=***TifHh
+#export AWS_ACCESS_KEY_ID=
+#export AWS_SECRET_ACCESS_KEY=
 
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    -i|--input)
+    INPUT="$2"
+    shift # past argument
+    shift # past value
+    ;;
+esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
 
 #set semicolon as delimiter
 IFS=';'
@@ -18,7 +32,7 @@ success=0
 errors=0
 
 #input.txt contains all images to be downloaded
-cat input.txt | while read line; do
+cat ${INPUT} | while read line; do
 
   #read line content into arr
   #id ${strarr[0]} | hash ${strarr[1]} | url ${strarr[2]}
@@ -31,7 +45,7 @@ cat input.txt | while read line; do
   if [ $? -eq 0 ]; then
     echo ${image} | base64 -d | aws s3 cp - s3://fashioncloud/test/${strarr[1]}_original.jpg
     if [ $? -eq 0 ]; then
-      echo ${strarr[0]} >> log.txt
+      echo ${strarr[0]} >> ${INPUT}_log.txt
       # ^^^ append id of successfully written record to log file
       let "success=success+1"
     else

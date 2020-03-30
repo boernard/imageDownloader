@@ -41,18 +41,20 @@ cat ${INPUT} | while read line; do
   # need to base64 encode otherwise image is corrupted
   # PIPESTATUS[0] ensures that the curl exit status is passed to $?
   # -s silent mode| -f fail instead of returning http codes | --connect.. max time for connecting | -m max time for whole download
-  image=$(curl -s -f --connect-timeout 2 -m 6 ${strarr[2]} | base64 ; exit ${PIPESTATUS[0]})
+  image=$(curl -s -f --connect-timeout 2 -m 15 ${strarr[2]} | base64 ; exit ${PIPESTATUS[0]})
   if [ $? -eq 0 ]; then
-    echo ${image} | base64 -d | aws s3 cp - s3://fashioncloud/test/${strarr[1]}_original.jpg
+    echo ${image} | base64 -d | aws s3 cp - s3://fashioncloud/test/bestseller/${strarr[1]}_original.jpg
     if [ $? -eq 0 ]; then
-      echo ${strarr[0]} >> ${INPUT}_log.txt
+      echo ${strarr[0]} >> {INPUT[@]/\.txt/}_log.txt
       # ^^^ append id of successfully written record to log file
       let "success=success+1"
     else
       let "errors=errors+1"
+      echo "${strarr[0]};${strarr[1]};${strarr[3]}" >> {INPUT[@]/\.txt/}_error_log.txt
     fi
   else
     let "errors=errors+1"
+    echo "${strarr[0]};${strarr[1]};${strarr[3]}" >> {INPUT[@]/\.txt/}_error_log.txt
   fi
   #ouput progress without printing newlines
   printf "\ruploaded: ${success} | errors: ${errors}"

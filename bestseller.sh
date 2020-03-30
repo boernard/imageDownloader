@@ -50,11 +50,11 @@ cat ${INPUT} | while read line; do
       let "success=success+1"
     else
       let "errors=errors+1"
-      echo "${strarr[0]};${strarr[1]};${strarr[3]}" >> {INPUT[@]/\.txt/}_error_log.txt
+      echo "${strarr[0]};${strarr[1]};${strarr[3]}" >> ${INPUT[@]/\.txt/}_error_log.txt
     fi
   else
     let "errors=errors+1"
-    echo "${strarr[0]};${strarr[1]};${strarr[3]}" >> {INPUT[@]/\.txt/}_error_log.txt
+    echo "${strarr[0]};${strarr[1]};${strarr[3]}" >> ${INPUT[@]/\.txt/}_error_log.txt
   fi
   #ouput progress without printing newlines
   printf "\ruploaded: ${success} | errors: ${errors}"
